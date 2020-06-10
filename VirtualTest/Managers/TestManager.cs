@@ -4,7 +4,7 @@ namespace VirtualTest
 {
     public class TestManager : BaseManager<Test, Context>
     {
-        public TestManager(Context dbContext) : base(dbContext) { }
+        public TestManager(Context context) : base(context) { }
 
         public override void Add(Test test)
         {

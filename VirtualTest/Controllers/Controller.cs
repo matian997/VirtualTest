@@ -32,16 +32,29 @@ namespace VirtualTest
             this.testManager = new TestManager(dbContext);
         }
 
+        public void NewUser(string userName, string password)
+        {
+            //verificar si ya existe uno con el mismo user name
+
+            var user = new User
+            {
+                UserName = userName,
+                Password = password
+            };
+
+            this.userManager.Add(user);
+        }
+
         public void NewTest (int amount, int categoryId, string difficulty)
         {
             var category = categoryManager.GetById(categoryId);
             
             var questions = commonServices.GetTestQuestions(amount, category.Name, difficulty);
 
-            this.currentTest = new Test()
+            this.currentTest = new Test
             {
                 Amount = amount,
-                Difficulty = category,
+                Difficulty = difficulty,
                 Category = category,
                 Questions = questions,
                 User = this.currentUser
