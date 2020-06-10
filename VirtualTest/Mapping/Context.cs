@@ -3,7 +3,7 @@ using VirtualTest.Domain;
 
 namespace VirtualTest
 {
-    public class EFConfing : DbContext
+    public class Context : DbContext
     {
         public IDbSet<User> Users { get; set; }
         public IDbSet<Test> Tests { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity.ModelConfiguration;
+using System.Security.Cryptography.X509Certificates;
 using VirtualTest.Domain;
 
 namespace VirtualTest.Mapping 
@@ -21,17 +22,10 @@ namespace VirtualTest.Mapping
                 .HasMaxLength(10)
                 .IsRequired();
 
-            this.Property(user => user.Name)
-                .HasColumnName("User_Name")
+            this.Property(user => user.Password)
+                .HasColumnName("User_Password")
                 .HasMaxLength(20)
                 .IsRequired();
-
-            this.Property(user => user.LastName)
-                .HasColumnName("User_LastName")
-                .HasMaxLength(20)
-                .IsRequired();
-
-            this.HasMany(user => user.Tests);
         }
     }
 }
