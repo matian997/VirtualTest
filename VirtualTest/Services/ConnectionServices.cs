@@ -7,7 +7,7 @@ using VirtualTest.Domain;
 
 namespace VirtualTest.Services
 {
-    public class CommonServices
+    public class ConnectionServices
     {
         public IEnumerable<Question> GetTestQuestions(int amount, string category, string dificulty)
         {
