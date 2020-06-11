@@ -7,7 +7,7 @@ namespace VirtualTest.Domain
         public int Id { get; set; }
         public string Description { get; set; }
         public string CorrectAnswer { get; set; }
-        public bool Result { get; set; }
+        public Result Result { get; set; }
         public IEnumerable<string> IncorrectAnswers { get; set; }
     }
 }

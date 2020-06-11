@@ -63,6 +63,7 @@
     <Compile Include="Domain\Category.cs" />
     <Compile Include="Domain\Dificulty.cs" />
     <Compile Include="Domain\Question.cs" />
+    <Compile Include="Domain\Result.cs" />
     <Compile Include="Domain\Test.cs" />
     <Compile Include="Domain\User.cs" />
     <Compile Include="DTO\QuestionDTO.cs" />

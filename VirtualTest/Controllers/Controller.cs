@@ -103,9 +103,19 @@ namespace VirtualTest
             if (question.CorrectAnswer == answer)
             {
                 result = true;
+
+                question.Result = Result.Correct;
+
                 // Do thing....
             }
+            else
+            {
+                question.Result = Result.Incorrect;
 
+                //Do thing...
+            }
+
+            
             return result;
         }
     }
