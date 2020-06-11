@@ -5,8 +5,8 @@ using System.Data.Entity;
 namespace VirtualTest
 {
     public abstract class BaseManager<TEntity, TContext> 
-        where TEntity:class
-        where TContext:DbContext
+        where TEntity : class
+        where TContext : DbContext
     {
         protected readonly TContext context;
 
@@ -20,29 +20,33 @@ namespace VirtualTest
             this.context = context;
         }
 
-        public abstract void Add(TEntity entity);
+        public void Add(TEntity entity)
+        {
+            context.Set<TEntity>().Add(entity);
+            context.SaveChanges();
+        }
 
         public TEntity GetById(int id)
         {
-            return this.context.Set<TEntity>().Find(id);
+            return context.Set<TEntity>().Find(id);
         }
 
         public IEnumerable<TEntity> GetAll()
         {
-            return this.context.Set<TEntity>();
+            return context.Set<TEntity>();
         }
 
         public void Remove(int id)
         {
-            var entity = this.GetById(id);
+            var entity = GetById(id);
 
             if (entity == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            this.context.Set<TEntity>().Remove(entity);
-            this.context.SaveChanges();
+            context.Set<TEntity>().Remove(entity);
+            context.SaveChanges();
         }
     }
 }

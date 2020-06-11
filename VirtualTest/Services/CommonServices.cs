@@ -45,7 +45,7 @@ namespace VirtualTest.Services
             return questions;
         }
 
-        public IEnumerable<Category> GetCategories()
+        public IEnumerable<Category> GetAllCategories()
         {
             var categories = new List<Category>();
 

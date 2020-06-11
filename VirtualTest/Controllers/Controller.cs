@@ -11,38 +11,60 @@ namespace VirtualTest
 {
     public class Controller
     {
-        private readonly CommonServices commonServices;
-        private readonly UserManager userManager;
-        private readonly TestManager testManager;
-        private readonly CategoryManager categoryManager;
-        private readonly Context dbContext;
-        private static readonly IMapper mapper;
+        private static readonly Lazy<Controller> instance = new Lazy<Controller>(() => new Controller());
+        
+        private Context context;
+
+        private UserManager userManager;
+        private TestManager testManager;
+        private CategoryManager categoryManager;
+
+        private IMapper mapper;
+
+        private CommonServices commonServices;
+
         private User currentUser;
         private Test currentTest;
 
-        public Controller(Context dbContext)
+        private Controller()
         {
-            if (dbContext == null)
-            {
-                throw new NotImplementedException();
-            }
+            context = Context.Instance;
+            
+            userManager = new UserManager(context);
+            testManager = new TestManager(context);
+            categoryManager = new CategoryManager(context);
 
-            this.dbContext = dbContext;
-            this.userManager = new UserManager(dbContext);
-            this.testManager = new TestManager(dbContext);
+            commonServices = new CommonServices();
+
+            //mapper = new Mapper();
+        }
+
+        public static Controller ControllerInstance
+        {
+            get
+            {
+                return instance.Value;
+            }
         }
 
         public void NewUser(string userName, string password)
         {
-            //verificar si ya existe uno con el mismo user name
+            userManager.NewUser(userName, password);
+        }
 
-            var user = new User
+        public void SignIn(string userName, string password)
+        {
+            var user = userManager.GetByUserName(userName);
+
+            if (user == null)
             {
-                UserName = userName,
-                Password = password
-            };
+                throw new ArgumentNullException(nameof(user));
+            }
 
-            this.userManager.Add(user);
+            if (user.Password == password)
+            {
+                currentUser = user;
+            }
         }
 
         public void NewTest (int amount, int categoryId, string difficulty)
@@ -51,14 +73,40 @@ namespace VirtualTest
             
             var questions = commonServices.GetTestQuestions(amount, category.Name, difficulty);
 
-            this.currentTest = new Test
+            currentTest = new Test
             {
                 Amount = amount,
-                Difficulty = difficulty,
+                //Difficulty = Difficulty,
                 Category = category,
                 Questions = questions,
-                User = this.currentUser
+                User = currentUser
             };
+        }
+
+        public void FinishTest()
+        {
+            currentTest.Finish();
+            testManager.Add(currentTest);
+        }
+
+        public void SatrtTest()
+        {
+            currentTest.Start();
+        }
+
+        public bool Intent (int idQuestion, string answer)
+        {
+            var result = false;
+
+            var question = currentTest.Questions.Where(x => x.Id == idQuestion).First();
+
+            if (question.CorrectAnswer == answer)
+            {
+                result = true;
+                // Do thing....
+            }
+
+            return result;
         }
     }
 }

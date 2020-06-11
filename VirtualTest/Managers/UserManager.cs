@@ -5,17 +5,28 @@ namespace VirtualTest
 {
     public class UserManager : BaseManager<User, Context>
     {
-        public UserManager(Context dbContext) : base(dbContext) { }
-        
-        public override void Add(User user)
+        public UserManager(Context context) : base(context) { }
+
+        public User GetByUserName(string userName)
         {
-            this.context.Set<User>().Add(user);
-            this.context.SaveChanges();
+            return context.Users.FirstOrDefault(user => user.UserName == userName);
         }
 
-        public bool FindByUserName(string userName)
+        public void NewUser(string userName, string password)
         {
-            return this.context.Set<User>().Any(user => user.UserName == userName);
+            var user = GetByUserName(userName);
+
+            if (user != null)
+            {
+                user = new User
+                {
+                    UserName = userName,
+                    Password = password
+                };
+
+                context.Users.Add(user);
+                context.SaveChanges();
+            }
         }
     }
 }

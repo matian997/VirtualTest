@@ -14,36 +14,43 @@ namespace VirtualTest.Domain
         public virtual DateTime EndDate { get; set; }
         public virtual User User { get; set; }
         public virtual IEnumerable<Question> Questions { get; set; } = new List<Question>();
-        public virtual double Duration => (this.EndDate - this.StartDate).TotalMinutes;
+
+        public double Duracion
+        {
+            get
+            {
+                return (EndDate - StartDate).TotalMinutes;
+            }
+        }
         
         public void Start()
         {
-            this.StartDate = DateTime.Now;
+            StartDate = DateTime.Now;
         }
 
         public void Finish()
         {
-            this.EndDate = DateTime.Now;
-            this.Score = this.GetScore();
+            EndDate = DateTime.Now;
+            //this.Score = this.GetScore();
         }
 
-        private double GetScore()
-        {
-            return this.GetCorrectAnswers() / this.Amount) * (int) this.Difficulty;
-        }
+        //private double GetScore()
+        //{
+        //    return this.GetCorrectAnswers() / this.Amount) * (int) this.Difficulty;
+        //}
 
-        private int GetCorrectAnswers()
-        {
-            int result = 0;
-            for (int i = 0; i <= this.Questions.Count; ++i) 
-            {
-                if (this.Questions[i].Result == true)
-                {
-                    ++result;
-                }
-            }
+        //private int GetCorrectAnswers()
+        //{
+        //    int result = 0;
+        //    for (int i = 0; i <= this.Questions.Count; ++i) 
+        //    {
+        //        if (this.Questions[i].Result == true)
+        //        {
+        //            ++result;
+        //        }
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
     }
 }
