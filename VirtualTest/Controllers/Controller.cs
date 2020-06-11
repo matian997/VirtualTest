@@ -47,12 +47,12 @@ namespace VirtualTest
             }
         }
 
-        public void NewUser(string userName, string password)
+        public void NewUser (string userName, string password)
         {
             userManager.NewUser(userName, password);
         }
 
-        public void SignIn(string userName, string password)
+        public void SignIn (string userName, string password)
         {
             var user = userManager.GetByUserName(userName);
 
@@ -83,18 +83,22 @@ namespace VirtualTest
             };
         }
 
-        public void FinishTest()
+        public TestDTO FinishTest ()
         {
             currentTest.Finish();
             testManager.Add(currentTest);
+
+            return mapper.Map<TestDTO>(currentTest);
         }
 
-        public void SatrtTest()
+        public IEnumerable<QuestionDTO> SatrtTest()
         {
             currentTest.Start();
+
+            return mapper.Map<IEnumerable<QuestionDTO>>(currentTest.Questions);
         }
 
-        public bool Intent (int idQuestion, string answer)
+        public bool Try (int idQuestion, string answer)
         {
             var result = false;
 
@@ -115,8 +119,16 @@ namespace VirtualTest
                 //Do thing...
             }
 
-            
             return result;
+        }
+
+        public IEnumerable<TestDTO> TopTenTest ()
+        {
+            var tests = testManager.GetAll();
+
+            tests.OrderByDescending(x => x.Score).Take(10);
+
+            return mapper.Map<IEnumerable<TestDTO>>(tests);
         }
     }
 }

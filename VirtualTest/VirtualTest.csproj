@@ -68,7 +68,6 @@
     <Compile Include="Domain\User.cs" />
     <Compile Include="DTO\QuestionDTO.cs" />
     <Compile Include="DTO\TestDTO.cs" />
-    <Compile Include="DTO\TestLiteDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />
     <Compile Include="Managers\CategoryManager.cs" />
     <Compile Include="Mapping\Context.cs" />
