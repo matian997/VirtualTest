@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace VirtualTest.Domain
 {
@@ -8,6 +9,7 @@ namespace VirtualTest.Domain
         public virtual int Id { get; set; }
         public virtual double Score { get; set; }
         public virtual int Amount { get; set; }
+        public virtual double Duracion { get; set; }
         public virtual Difficulty Difficulty { get; set; }
         public virtual Category Category { get; set; }
         public virtual DateTime StartDate { get; set; }
@@ -15,13 +17,13 @@ namespace VirtualTest.Domain
         public virtual User User { get; set; }
         public virtual IEnumerable<Question> Questions { get; set; } = new List<Question>();
 
-        public double Duracion
-        {
-            get
-            {
-                return (EndDate - StartDate).TotalMinutes;
-            }
-        }
+        //public double Duracion
+        //{
+        //    get
+        //    {
+        //        return (EndDate - StartDate).TotalMinutes;
+        //    }
+        //}
         
         public void Start()
         {
@@ -31,26 +33,13 @@ namespace VirtualTest.Domain
         public void Finish()
         {
             EndDate = DateTime.Now;
-            //this.Score = this.GetScore();
         }
 
-        //private double GetScore()
-        //{
-        //    return this.GetCorrectAnswers() / this.Amount) * (int) this.Difficulty;
-        //}
+        public int GetAmountCorrectAnwers()
+        {
+            var amount = Questions.Where(x => x.Result == Result.Correct).Count();
 
-        //private int GetCorrectAnswers()
-        //{
-        //    int result = 0;
-        //    for (int i = 0; i <= this.Questions.Count; ++i) 
-        //    {
-        //        if (this.Questions[i].Result == true)
-        //        {
-        //            ++result;
-        //        }
-        //    }
-
-        //    return result;
-        //}
+            return amount;
+        }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace VirtualTest.DTO
+﻿namespace VirtualTest.DTO
 {
     public class TestDTO
     {

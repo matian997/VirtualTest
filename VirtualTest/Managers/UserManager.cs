@@ -1,11 +1,12 @@
 ﻿using System.Linq;
 using VirtualTest.Domain;
+using VirtualTest.Mapping;
 
-namespace VirtualTest
+namespace VirtualTest.Managers
 {
-    public class UserManager : BaseManager<User, Context>
+    public class UserManager : BaseManager<User, ContextDb>
     {
-        public UserManager(Context context) : base(context) { }
+        public UserManager(ContextDb context) : base(context) { }
 
         public User GetByUserName(string userName)
         {

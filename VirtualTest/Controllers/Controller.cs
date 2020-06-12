@@ -6,35 +6,40 @@ using System.Collections.Generic;
 using AutoMapper;
 using VirtualTest.Services;
 using VirtualTest.Managers;
+using VirtualTest.Services.Interfaces;
+using VirtualTest.Mapping;
 
-namespace VirtualTest
+namespace VirtualTest.Controllers
 {
     public class Controller
     {
         private static readonly Lazy<Controller> instance = new Lazy<Controller>(() => new Controller());
         
-        private Context context;
+        private ContextDb context;
 
-        private UserManager userManager;
-        private TestManager testManager;
-        private CategoryManager categoryManager;
+        // publicos para hacer pruebas
+        public UserManager userManager;
+        public TestManager testManager;
+        public CategoryManager categoryManager;
 
         private IMapper mapper;
 
-        private CommonServices commonServices;
+        private IConnectionService conecctionServices;
+        private IStrategyScore strategyScore;
 
         private User currentUser;
         private Test currentTest;
 
         private Controller()
         {
-            context = Context.Instance;
+            context = ContextDb.Instance;
             
             userManager = new UserManager(context);
             testManager = new TestManager(context);
             categoryManager = new CategoryManager(context);
 
-            commonServices = new CommonServices();
+            conecctionServices = new ConnectionServices();
+            strategyScore = new StrategyScore();
 
             //mapper = new Mapper();
         }
@@ -71,7 +76,7 @@ namespace VirtualTest
         {
             var category = categoryManager.GetById(categoryId);
             
-            var questions = commonServices.GetTestQuestions(amount, category.Name, difficulty);
+            var questions = conecctionServices.GetTestQuestions(amount, category.Name, difficulty);
 
             currentTest = new Test
             {
@@ -86,6 +91,11 @@ namespace VirtualTest
         public TestDTO FinishTest ()
         {
             currentTest.Finish();
+
+            var amountCorrectAwnwers = currentTest.GetAmountCorrectAnwers();
+
+            //currentTest.Score = strategyScore.GetScoreByOpenTDB(amountCorrectAwnwers, currentTest.Amount, currentTest.Difficulty, currentTest.Duracion);
+
             testManager.Add(currentTest);
 
             return mapper.Map<TestDTO>(currentTest);
@@ -110,13 +120,13 @@ namespace VirtualTest
 
                 question.Result = Result.Correct;
 
-                // Do thing....
+                // Do something....
             }
             else
             {
                 question.Result = Result.Incorrect;
 
-                //Do thing...
+                //Do something...
             }
 
             return result;

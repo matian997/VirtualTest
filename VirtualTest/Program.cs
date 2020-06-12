@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using VirtualTest.Controllers;
 
 namespace VirtualTest
 {
@@ -10,6 +7,15 @@ namespace VirtualTest
     {
         static void Main(string[] args)
         {
+            var x = Controller.ControllerInstance;
+
+            x.NewUser("matias", "tupasbourd");
+
+            var users = x.userManager.GetAll();
+
+            Console.WriteLine(users);
+
+            Console.ReadKey();
         }
     }
 }

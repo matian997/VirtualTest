@@ -1,9 +1,10 @@
 ﻿using VirtualTest.Domain;
+using VirtualTest.Mapping;
 
-namespace VirtualTest
+namespace VirtualTest.Managers
 {
-    public class TestManager : BaseManager<Test, Context>
+    public class TestManager : BaseManager<Test, ContextDb>
     {
-        public TestManager(Context context) : base(context) { }
+        public TestManager(ContextDb context) : base(context) { }
     }
 }

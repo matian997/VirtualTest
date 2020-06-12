@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 
-namespace VirtualTest
+namespace VirtualTest.Managers
 {
     public abstract class BaseManager<TEntity, TContext> 
         where TEntity : class

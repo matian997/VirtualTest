@@ -1,5 +1,4 @@
 ﻿using System.Data.Entity.ModelConfiguration;
-using System.Security.Cryptography.X509Certificates;
 using VirtualTest.Domain;
 
 namespace VirtualTest.Mapping 

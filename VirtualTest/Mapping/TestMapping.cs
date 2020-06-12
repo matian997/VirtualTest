@@ -20,7 +20,7 @@ namespace VirtualTest.Mapping
                 .HasColumnName("Test_Score")
                 .IsRequired();
 
-            this.Property(test => test.Duration)
+            this.Property(test => test.Duracion)
                 .HasColumnName("Test_Duration")
                 .IsRequired();
 

@@ -4,10 +4,11 @@ using System.IO;
 using System.Net;
 using System.Text;
 using VirtualTest.Domain;
+using VirtualTest.Services.Interfaces;
 
 namespace VirtualTest.Services
 {
-    public class ConnectionServices
+    public class ConnectionServices : IConnectionService
     {
         public IEnumerable<Question> GetTestQuestions(int amount, string category, string dificulty)
         {

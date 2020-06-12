@@ -9,7 +9,6 @@ namespace VirtualTest.Profiles
         public TestProfile()
         {
             CreateMap<Test, TestDTO>();
-            CreateMap<Test, TestLiteDTO>();
         }
     }
 }
