@@ -61,7 +61,7 @@ namespace VirtualTest.Services
 
                 dynamic responseJSON = JsonConvert.DeserializeObject(reader.ReadToEnd());
 
-                foreach (var responseItem in responseJSON.results)
+                foreach (var responseItem in responseJSON.trivia_categories)
                 {
                     var category = new Category
                     {
