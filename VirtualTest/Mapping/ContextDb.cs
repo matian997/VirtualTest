@@ -16,7 +16,7 @@ namespace VirtualTest.Mapping
 
         protected override void OnModelCreating(DbModelBuilder modelBuielder)
         {
-            modelBuielder.Configurations.AddFromAssembly(System.Reflection.Assembly.GetExecutingAssembly());
+           modelBuielder.Configurations.AddFromAssembly(System.Reflection.Assembly.GetExecutingAssembly());
 
             base.OnModelCreating(modelBuielder);
         }

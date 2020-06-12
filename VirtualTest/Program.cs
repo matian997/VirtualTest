@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using VirtualTest.Controllers;
+using VirtualTest.Domain;
 
 namespace VirtualTest
 {
@@ -11,9 +14,16 @@ namespace VirtualTest
 
             x.NewUser("matias", "tupasbourd");
 
-            var users = x.userManager.GetAll();
+            IEnumerable<User> users = x.userManager.GetAll();
 
-            Console.WriteLine(users);
+            foreach (var user in users)
+            {
+                Console.WriteLine(user.Id);
+                Console.WriteLine(user.UserName);
+                Console.WriteLine(user.Password);
+            }
+
+           
 
             Console.ReadKey();
         }

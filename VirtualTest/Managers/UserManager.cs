@@ -17,7 +17,7 @@ namespace VirtualTest.Managers
         {
             var user = GetByUserName(userName);
 
-            if (user != null)
+            if (user == null)
             {
                 user = new User
                 {
