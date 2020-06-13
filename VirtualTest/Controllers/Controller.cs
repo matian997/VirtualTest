@@ -7,7 +7,7 @@ using AutoMapper;
 using VirtualTest.Services;
 using VirtualTest.Managers;
 using VirtualTest.Services.Interfaces;
-using VirtualTest.Mapping;
+using VirtualTest.Configuration;
 
 namespace VirtualTest.Controllers
 {
@@ -15,7 +15,7 @@ namespace VirtualTest.Controllers
     {
         private static readonly Lazy<Controller> instance = new Lazy<Controller>(() => new Controller());
         
-        private ContextDb context;
+        private ApplicationContext context;
 
         // publicos para hacer pruebas
         public UserManager userManager;
@@ -23,25 +23,25 @@ namespace VirtualTest.Controllers
         public CategoryManager categoryManager;
 
         private IMapper mapper;
-
-        private IConnectionService conecctionServices;
+        private IConnectionService connectionServices;
         private IStrategyScore strategyScore;
+        private IEncryptionService encryptionService;
 
         private User currentUser;
         private Test currentTest;
 
         private Controller()
         {
-            context = ContextDb.Instance;
+            context = ApplicationContext.Instance;
             
             userManager = new UserManager(context);
             testManager = new TestManager(context);
             categoryManager = new CategoryManager(context);
 
-            conecctionServices = new ConnectionServices();
+            mapper = MapperConfig.Instance;
+            connectionServices = new ConnectionServices();
             strategyScore = new StrategyScore();
-
-            //mapper = new Mapper();
+            encryptionService = new EncryptionService();
         }
 
         public static Controller ControllerInstance
@@ -52,12 +52,14 @@ namespace VirtualTest.Controllers
             }
         }
 
-        public void NewUser (string userName, string password)
+        public void SignIn(string userName, string password)
         {
-            userManager.NewUser(userName, password);
+            var encryptedPassword = encryptionService.Encrypt(password);
+
+            userManager.NewUser(userName, encryptedPassword);
         }
 
-        public void SignIn (string userName, string password)
+        public UserDTO LogIn(string userName, string password)
         {
             var user = userManager.GetByUserName(userName);
 
@@ -66,39 +68,46 @@ namespace VirtualTest.Controllers
                 throw new ArgumentNullException(nameof(user));
             }
 
-            if (user.Password == password)
+            var dencryptedPassword = encryptionService.Dencrypt(user.Password);
+
+            if (dencryptedPassword == password)
             {
                 currentUser = user;
             }
+
+            return mapper.Map<UserDTO>(user);
         }
 
-        public void NewTest (int amount, int categoryId, string difficulty)
+        public void LogOut()
         {
-            var category = categoryManager.GetById(categoryId);
-            
-            var questions = conecctionServices.GetTestQuestions(amount, category.Name, difficulty);
+            // Do something...
+        }
+
+        public void NewTest(int amount, int categoryId, Difficulty difficulty)
+        {   
+            var questions = connectionServices.GetTestQuestions(amount, categoryId, difficulty.ToString());
 
             currentTest = new Test
             {
                 Amount = amount,
-                //Difficulty = Difficulty,
-                Category = category,
+                Difficulty = difficulty,
+                Category = categoryManager.GetById(categoryId),
                 Questions = questions,
-                User = currentUser
+                //User = currentUser
             };
         }
 
-        public TestDTO FinishTest ()
+        public TestLiteDTO FinishTest()
         {
             currentTest.Finish();
 
             var amountCorrectAwnwers = currentTest.GetAmountCorrectAnwers();
 
-            //currentTest.Score = strategyScore.GetScoreByOpenTDB(amountCorrectAwnwers, currentTest.Amount, currentTest.Difficulty, currentTest.Duracion);
+            currentTest.Score = strategyScore.GetScoreByOpenTDB(amountCorrectAwnwers, currentTest.Amount, currentTest.Difficulty, currentTest.Duracion);
 
             testManager.Add(currentTest);
 
-            return mapper.Map<TestDTO>(currentTest);
+            return mapper.Map<TestLiteDTO>(currentTest);
         }
 
         public IEnumerable<QuestionDTO> SatrtTest()
@@ -108,7 +117,7 @@ namespace VirtualTest.Controllers
             return mapper.Map<IEnumerable<QuestionDTO>>(currentTest.Questions);
         }
 
-        public bool Try (int idQuestion, string answer)
+        public bool Try(int idQuestion, string answer)
         {
             var result = false;
 
@@ -132,13 +141,25 @@ namespace VirtualTest.Controllers
             return result;
         }
 
-        public IEnumerable<TestDTO> TopTenTest ()
+        public void CancelTest()
+        {
+            // Do something
+        }
+
+        public IEnumerable<TestLiteDTO> TopTenTest()
         {
             var tests = testManager.GetAll();
 
-            tests.OrderByDescending(x => x.Score).Take(10);
+            var topTests = tests.OrderByDescending(x => x.Score).Take(10);
 
-            return mapper.Map<IEnumerable<TestDTO>>(tests);
+            return mapper.Map<IEnumerable<TestLiteDTO>>(topTests);
+        }
+
+        public IEnumerable<CategoryDTO> GetAllCategories()
+        {
+            var allCategories = categoryManager.GetAll();
+
+            return mapper.Map<IEnumerable<CategoryDTO>>(allCategories);
         }
     }
 }

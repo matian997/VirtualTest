@@ -1,15 +1,16 @@
 ﻿using System.Linq;
+using VirtualTest.Configuration;
 using VirtualTest.Domain;
-using VirtualTest.Mapping;
 
 namespace VirtualTest.Managers
 {
-    public class UserManager : BaseManager<User, ContextDb>
+    public class UserManager : BaseManager<User, ApplicationContext>
     {
-        public UserManager(ContextDb context) : base(context) { }
+        public UserManager(ApplicationContext context) : base(context) { }
 
         public User GetByUserName(string userName)
         {
+            
             return context.Users.FirstOrDefault(user => user.UserName == userName);
         }
 
@@ -25,8 +26,7 @@ namespace VirtualTest.Managers
                     Password = password
                 };
 
-                context.Users.Add(user);
-                context.SaveChanges();
+                Add(user);
             }
         }
     }

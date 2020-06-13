@@ -1,10 +1,10 @@
-﻿using VirtualTest.Domain;
-using VirtualTest.Mapping;
+﻿using VirtualTest.Configuration;
+using VirtualTest.Domain;
 
 namespace VirtualTest.Managers
 {
-    public class CategoryManager : BaseManager<Category, ContextDb>
+    public class CategoryManager : BaseManager<Category, ApplicationContext>
     {
-        public CategoryManager(ContextDb context) : base(context) { }
+        public CategoryManager(ApplicationContext context) : base(context) { }
     }
 }

@@ -5,7 +5,7 @@ namespace VirtualTest.Services
 {
     public class StrategyScore : IStrategyScore
     {
-        public double GetScoreByOpenTDB(int amountCorrectAnswers, int amountQuestions, Difficulty difficulty, int timeConsumed)
+        public double GetScoreByOpenTDB(int amountCorrectAnswers, int amountQuestions, Difficulty difficulty, double timeConsumed)
         {
             double timeFactor;
             double seconds = timeConsumed / amountQuestions;

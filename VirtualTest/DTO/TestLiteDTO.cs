@@ -1,10 +1,12 @@
-﻿namespace VirtualTest.DTO
+﻿using System;
+
+namespace VirtualTest.DTO
 {
-    public class TestDTO
+    public class TestLiteDTO
     {
         public string UserName { get; set; }
         public double Score { get; set; }
         public double Duration { get; set; }
-        public double Date { get; set; }
+        public DateTime Date { get; set; }
     }
 }

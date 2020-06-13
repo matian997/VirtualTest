@@ -5,7 +5,7 @@ namespace VirtualTest.Services.Interfaces
 {
     interface IConnectionService
     {
-        IEnumerable<Question> GetTestQuestions(int amount, string category, string dificulty);
+        IEnumerable<Question> GetTestQuestions(int amount, int category, string dificulty);
         IEnumerable<Category> GetAllCategories();
     }
 }

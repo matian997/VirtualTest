@@ -8,7 +8,9 @@ namespace VirtualTest.Profiles
     {
         public TestProfile()
         {
-            CreateMap<Test, TestDTO>();
+            CreateMap<Test, TestLiteDTO>()
+                .ForMember(x => x.UserName, y => y.MapFrom(x => x.User.UserName))
+                .ForMember(x => x.Date, y => y.MapFrom(x => x.StartDate));
         }
     }
 }

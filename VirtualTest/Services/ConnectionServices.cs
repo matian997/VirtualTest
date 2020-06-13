@@ -10,7 +10,7 @@ namespace VirtualTest.Services
 {
     public class ConnectionServices : IConnectionService
     {
-        public IEnumerable<Question> GetTestQuestions(int amount, string category, string dificulty)
+        public IEnumerable<Question> GetTestQuestions(int amount, int category, string dificulty)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
@@ -33,10 +33,9 @@ namespace VirtualTest.Services
                 {
                     var question = new Question
                     {
-                        Id= responseItem.id,
                         Description = responseItem.question,
                         CorrectAnswer = responseItem.correct_answer,
-                        IncorrectAnswers = responseItem.incorrect_answer
+                        IncorrectAnswers = responseItem.incorrect_answers.ToObject<List<string>>()
                     };
 
                     questions.Add(question);

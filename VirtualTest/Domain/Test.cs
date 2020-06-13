@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 
 namespace VirtualTest.Domain
 {
@@ -15,9 +16,9 @@ namespace VirtualTest.Domain
         public virtual DateTime StartDate { get; set; }
         public virtual DateTime EndDate { get; set; }
         public virtual User User { get; set; }
-        public virtual IEnumerable<Question> Questions { get; set; } = new List<Question>();
+        public  IEnumerable<Question> Questions { get; set; } = new List<Question>();
 
-        //public double Duracion
+        //public virtual double Duracion
         //{
         //    get
         //    {
@@ -33,6 +34,7 @@ namespace VirtualTest.Domain
         public void Finish()
         {
             EndDate = DateTime.Now;
+            Duracion = (EndDate - StartDate).TotalMinutes;
         }
 
         public int GetAmountCorrectAnwers()

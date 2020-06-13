@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using VirtualTest.Controllers;
 using VirtualTest.Domain;
+using VirtualTest.DTO;
 
 namespace VirtualTest
 {
@@ -12,20 +14,24 @@ namespace VirtualTest
         {
             var x = Controller.ControllerInstance;
 
-            x.NewUser("matias", "tupasbourd");
+            x.NewTest(10, 9, Difficulty.easy);
 
-            IEnumerable<User> users = x.userManager.GetAll();
+            var y = x.SatrtTest();
 
-            foreach (var user in users)
+            foreach(var q in y)
             {
-                Console.WriteLine(user.Id);
-                Console.WriteLine(user.UserName);
-                Console.WriteLine(user.Password);
+                Console.Write("Pregunta: ");
+                Console.WriteLine(q.Description);
+                Console.Write("Respuestas: ");
+                Console.WriteLine(q.CorrectAnswer);
+                Console.Write("------------------");
+
+                Console.ReadKey();
             }
 
-           
-
             Console.ReadKey();
+
+
         }
     }
 }
