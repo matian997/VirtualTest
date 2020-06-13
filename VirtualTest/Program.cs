@@ -14,24 +14,36 @@ namespace VirtualTest
         {
             var x = Controller.ControllerInstance;
 
-            x.NewTest(10, 9, Difficulty.easy);
+            //x.NewTest(10, 9, Difficulty.easy);
 
-            var y = x.SatrtTest();
+            //var y = x.SatrtTest();
 
-            foreach(var q in y)
+            //foreach(var q in y)
+            //{
+            //    Console.Write("Pregunta: ");
+            //    Console.WriteLine(q.Description);
+            //    Console.Write("Respuestas: ");
+            //    Console.WriteLine(q.CorrectAnswer);
+            //    Console.Write("------------------");
+
+            //    Console.ReadKey();
+            //}
+
+            var categories = x.GetAllCategories();
+
+            foreach(var category in categories)
             {
-                Console.Write("Pregunta: ");
-                Console.WriteLine(q.Description);
-                Console.Write("Respuestas: ");
-                Console.WriteLine(q.CorrectAnswer);
-                Console.Write("------------------");
+                Console.Write("Id: ");
+                Console.WriteLine(category.No);
+                Console.Write("Name: ");
+                Console.WriteLine(category.Name);
 
-                Console.ReadKey();
+                x.categoryManager.Remove(category.Id);
             }
 
+
+
             Console.ReadKey();
-
-
         }
     }
 }
