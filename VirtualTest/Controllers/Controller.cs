@@ -42,6 +42,13 @@ namespace VirtualTest.Controllers
             connectionServices = new ConnectionServices();
             strategyScore = new StrategyScore();
             encryptionService = new EncryptionService();
+
+            //Carga de categories
+            var categories = connectionServices.GetAllCategories();
+            foreach(var category in categories)
+            {
+                categoryManager.Add(category);
+            }
         }
 
         public static Controller ControllerInstance
