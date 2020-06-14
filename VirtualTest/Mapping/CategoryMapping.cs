@@ -19,7 +19,7 @@ namespace VirtualTest.Mapping
                 .HasColumnName("CATEGORY_ID");
 
             this.Property(category => category.Name)
-                .HasMaxLength(50)
+                .HasMaxLength(70)
                 .HasColumnName("CATEGORY_NAME")
                 .IsRequired();
         }
