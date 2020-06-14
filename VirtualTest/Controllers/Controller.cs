@@ -32,7 +32,7 @@ namespace VirtualTest.Controllers
 
         private Controller()
         {
-            context = ApplicationContext.Instance;
+            context = new ApplicationContext();
             
             userManager = new UserManager(context);
             testManager = new TestManager(context);
