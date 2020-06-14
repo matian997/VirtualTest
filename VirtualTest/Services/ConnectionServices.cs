@@ -64,7 +64,7 @@ namespace VirtualTest.Services
                 {
                     var category = new Category
                     {
-                        Id = responseItem.id,
+                        No = responseItem.id,
                         Name = responseItem.name
                     };
 

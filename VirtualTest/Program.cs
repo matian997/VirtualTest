@@ -29,17 +29,19 @@ namespace VirtualTest
             //    Console.ReadKey();
             //}
 
-            var categories = x.GetAllCategories();
+            //var categories = x.GetAllCategories();
 
-            foreach(var category in categories)
-            {
-                Console.Write("Id: ");
-                Console.WriteLine(category.No);
-                Console.Write("Name: ");
-                Console.WriteLine(category.Name);
+            //foreach(var category in categories)
+            //{
+            //    Console.Write("Id: ");
+            //    Console.WriteLine(category.No);
+            //    Console.Write("Name: ");
+            //    Console.WriteLine(category.Name);
 
-                x.categoryManager.Remove(category.Id);
-            }
+            //    x.categoryManager.Remove(category.Id);
+            //}
+
+            Console.Write("Listo");
 
 
 

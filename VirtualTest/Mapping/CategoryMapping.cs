@@ -11,6 +11,10 @@ namespace VirtualTest.Mapping
 
             this.HasKey(category => category.Id);
 
+            this.Property(category => category.No)
+               .HasColumnName("CATEGORY_NO")
+               .IsRequired();
+
             this.Property(category => category.Id)
                 .HasColumnName("CATEGORY_ID");
 

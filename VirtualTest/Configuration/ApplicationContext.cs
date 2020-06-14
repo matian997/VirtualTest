@@ -12,7 +12,7 @@ namespace VirtualTest.Configuration
         public IDbSet<Test> Tests { get; set; }
         public IDbSet<Category> Categories { get; set; }
 
-        private ApplicationContext() : base("Context") { }
+        private ApplicationContext() : base("AplicationContextTest") { }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
