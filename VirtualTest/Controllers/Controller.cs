@@ -39,16 +39,16 @@ namespace VirtualTest.Controllers
             categoryManager = new CategoryManager(context);
 
             mapper = MapperConfig.Instance;
-            connectionServices = new ConnectionServices();
-            strategyScore = new StrategyScore();
-            encryptionService = new EncryptionService();
+            connectionServices = new ConnectionServicesOpenTdb();
+            strategyScore = new StrategyScoreOpenTdb();
+            encryptionService = new EncryptionTripleDES();
 
-            //Carga de categories
+            /*//Carga de categories
             var categories = connectionServices.GetAllCategories();
             foreach(var category in categories)
             {
                 categoryManager.Add(category);
-            }
+            }*/
         }
 
         public static Controller ControllerInstance
@@ -110,7 +110,7 @@ namespace VirtualTest.Controllers
 
             var amountCorrectAwnwers = currentTest.GetAmountCorrectAnwers();
 
-            currentTest.Score = strategyScore.GetScoreByOpenTDB(amountCorrectAwnwers, currentTest.Amount, currentTest.Difficulty, currentTest.Duracion);
+            currentTest.Score = strategyScore.GetScore(amountCorrectAwnwers, currentTest.Amount, currentTest.Difficulty, currentTest.Duracion);
 
             testManager.Add(currentTest);
 
