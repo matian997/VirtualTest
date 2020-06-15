@@ -10,7 +10,7 @@ namespace VirtualTest.Configuration
         public IDbSet<Test> Tests { get; set; }
         public IDbSet<Category> Categories { get; set; }
 
-        public ApplicationContext() : base("AplicationContextTest")
+        public ApplicationContext() : base("ApplicationContext")
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<ApplicationContext, VirtualTest.Migrations.Configuration>());
         }
