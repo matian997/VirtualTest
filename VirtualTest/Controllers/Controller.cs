@@ -14,35 +14,11 @@ namespace VirtualTest.Controllers
     public class Controller
     {
         private static readonly Lazy<Controller> instance = new Lazy<Controller>(() => new Controller());
-        
-        private ApplicationContext context;
-
-        // publicos para hacer pruebas
-        public UserManager userManager;
-        public TestManager testManager;
-        public CategoryManager categoryManager;
-
-        private IMapper mapper;
-        private IConnectionService connectionServices;
-        private IStrategyScore strategyScore;
-        private IEncryptionService encryptionService;
-
         private User currentUser;
         private Test currentTest;
 
         private Controller()
         {
-            context = new ApplicationContext();
-            
-            userManager = new UserManager(context);
-            testManager = new TestManager(context);
-            categoryManager = new CategoryManager(context);
-
-            mapper = MapperConfig.Instance;
-            connectionServices = new ConnectionServicesOpenTdb();
-            strategyScore = new StrategyScoreOpenTdb();
-            encryptionService = new EncryptionTripleDES();
-
             /*//Carga de categories
             var categories = connectionServices.GetAllCategories();
             foreach(var category in categories)
@@ -61,28 +37,41 @@ namespace VirtualTest.Controllers
 
         public void SignIn(string userName, string password)
         {
-            var encryptedPassword = encryptionService.Encrypt(password);
+            using (var dbContext = new ApplicationContext())
+            { 
+                IEncryptionService encryptionService = new EncryptionTripleDES();
 
-            userManager.NewUser(userName, encryptedPassword);
+                UserManager userManager = new UserManager(dbContext);
+
+                var encryptedPassword = encryptionService.Encrypt(password);
+
+                userManager.NewUser(userName, encryptedPassword);   
+            }
         }
-
         public UserDTO LogIn(string userName, string password)
         {
-            var user = userManager.GetByUserName(userName);
-
-            if (user == null)
+            using (var dbContext = new ApplicationContext())
             {
-                throw new ArgumentNullException(nameof(user));
+                UserManager userManager = new UserManager(dbContext);
+                IEncryptionService encryptionService = new EncryptionTripleDES();
+                IMapper mapper = MapperConfig.Instance;
+
+                var user = userManager.GetByUserName(userName);
+
+                if (user == null)
+                {
+                    throw new ArgumentNullException(nameof(user));
+                }
+
+                var dencryptedPassword = encryptionService.Dencrypt(user.Password);
+
+                if (dencryptedPassword == password)
+                {
+                    currentUser = user;
+                }
+
+                return mapper.Map<UserDTO>(user);
             }
-
-            var dencryptedPassword = encryptionService.Dencrypt(user.Password);
-
-            if (dencryptedPassword == password)
-            {
-                currentUser = user;
-            }
-
-            return mapper.Map<UserDTO>(user);
         }
 
         public void LogOut()
@@ -92,33 +81,47 @@ namespace VirtualTest.Controllers
 
         public void NewTest(int amount, int categoryId, Difficulty difficulty)
         {   
-            var questions = connectionServices.GetTestQuestions(amount, categoryId, difficulty.ToString());
-
-            currentTest = new Test
+            using (var dbContext = new ApplicationContext())
             {
-                Amount = amount,
-                Difficulty = difficulty,
-                Category = categoryManager.GetById(categoryId),
-                Questions = questions,
-                //User = currentUser
-            };
+                using (IConnectionService connectionServices = new ConnectionServicesOpenTdb())
+                {
+                    var questions = connectionServices.GetTestQuestions(amount, categoryId, difficulty.ToString());
+                    CategoryManager categoryManager = new CategoryManager(dbContext);
+                    currentTest = new Test
+                    {
+                        Amount = amount,
+                        Difficulty = difficulty,
+                        Category = categoryManager.GetById(categoryId),
+                        Questions = questions,
+                        User = currentUser
+                    };
+                }
+            }
         }
 
         public TestLiteDTO FinishTest()
         {
-            currentTest.Finish();
+            using (var dbContext = new ApplicationContext())
+            {
+                IStrategyScore strategyScore = new StrategyScoreOpenTdb();
+                TestManager testManager = new TestManager(dbContext);
+                IMapper mapper = MapperConfig.Instance;
 
-            var amountCorrectAwnwers = currentTest.GetAmountCorrectAnwers();
+                currentTest.Finish();
 
-            currentTest.Score = strategyScore.GetScore(amountCorrectAwnwers, currentTest.Amount, currentTest.Difficulty, currentTest.Duracion);
+                var amountCorrectAwnwers = currentTest.GetAmountCorrectAnwers();
 
-            testManager.Add(currentTest);
+                currentTest.Score = strategyScore.GetScore(amountCorrectAwnwers, currentTest.Amount, currentTest.Difficulty, currentTest.Duracion);
 
-            return mapper.Map<TestLiteDTO>(currentTest);
+                testManager.Add(currentTest);
+
+                return mapper.Map<TestLiteDTO>(currentTest);
+            }
         }
 
-        public IEnumerable<QuestionDTO> SatrtTest()
+        public IEnumerable<QuestionDTO> StartTest()
         {
+            IMapper mapper = MapperConfig.Instance;
             currentTest.Start();
 
             return mapper.Map<IEnumerable<QuestionDTO>>(currentTest.Questions);
@@ -155,18 +158,30 @@ namespace VirtualTest.Controllers
 
         public IEnumerable<TestLiteDTO> TopTenTest()
         {
-            var tests = testManager.GetAll();
+            using (var dbContext = new ApplicationContext())
+            {
+                TestManager testManager = new TestManager(dbContext);
+                IMapper mapper = MapperConfig.Instance;
 
-            var topTests = tests.OrderByDescending(x => x.Score).Take(10);
+                var tests = testManager.GetAll();
 
-            return mapper.Map<IEnumerable<TestLiteDTO>>(topTests);
+                var topTests = tests.OrderByDescending(x => x.Score).Take(10);
+
+                return mapper.Map<IEnumerable<TestLiteDTO>>(topTests);
+            }
         }
 
         public IEnumerable<CategoryDTO> GetAllCategories()
         {
-            var allCategories = categoryManager.GetAll();
+            using (var dbContext = new ApplicationContext())
+            {
+                CategoryManager categoryManager = new CategoryManager(dbContext);
+                IMapper mapper = MapperConfig.Instance;
 
-            return mapper.Map<IEnumerable<CategoryDTO>>(allCategories);
+                var allCategories = categoryManager.GetAll();
+
+                return mapper.Map<IEnumerable<CategoryDTO>>(allCategories);
+            }
         }
     }
 }
