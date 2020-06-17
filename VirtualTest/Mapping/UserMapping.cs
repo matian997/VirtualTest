@@ -23,7 +23,7 @@ namespace VirtualTest.Mapping
 
             this.Property(user => user.Password)
                 .HasColumnName("User_Password")
-                .HasMaxLength(20)
+                .HasMaxLength(500)
                 .IsRequired();
         }
     }

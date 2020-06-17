@@ -14,10 +14,10 @@ namespace VirtualTest.Managers
             return context.Users.FirstOrDefault(user => user.UserName == userName);
         }
 
-        public void NewUser(string userName, string password)
+        public bool NewUser(string userName, string password)
         {
             var user = GetByUserName(userName);
-
+            bool result;
             if (user == null)
             {
                 user = new User
@@ -27,7 +27,13 @@ namespace VirtualTest.Managers
                 };
 
                 Add(user);
+                result = true;
             }
+            else
+            {
+                result = false;
+            }
+            return result;
         }
     }
 }

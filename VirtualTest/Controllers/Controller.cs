@@ -16,6 +16,9 @@ namespace VirtualTest.Controllers
         private static readonly Lazy<Controller> instance = new Lazy<Controller>(() => new Controller());
         private User currentUser;
         private Test currentTest;
+        private IMapper mapper;
+        private IEncryptionService encryptionService;
+        private IConnectionService connectionService;
 
         private Controller()
         {
@@ -25,6 +28,9 @@ namespace VirtualTest.Controllers
             {
                 categoryManager.Add(category);
             }*/
+            mapper = MapperConfig.Instance;
+            encryptionService = new EncryptionTripleDES();
+            connectionService = new ConnectionServicesOpenTdb();
         }
 
         public static Controller ControllerInstance
@@ -35,17 +41,15 @@ namespace VirtualTest.Controllers
             }
         }
 
-        public void SignIn(string userName, string password)
+        public bool SignIn(string userName, string password)
         {
             using (var dbContext = new ApplicationContext())
             { 
-                IEncryptionService encryptionService = new EncryptionTripleDES();
-
                 UserManager userManager = new UserManager(dbContext);
 
                 var encryptedPassword = encryptionService.Encrypt(password);
 
-                userManager.NewUser(userName, encryptedPassword);   
+                return userManager.NewUser(userName, encryptedPassword);   
             }
         }
         public UserDTO LogIn(string userName, string password)
@@ -53,9 +57,6 @@ namespace VirtualTest.Controllers
             using (var dbContext = new ApplicationContext())
             {
                 UserManager userManager = new UserManager(dbContext);
-                IEncryptionService encryptionService = new EncryptionTripleDES();
-                IMapper mapper = MapperConfig.Instance;
-
                 var user = userManager.GetByUserName(userName);
 
                 if (user == null)
@@ -83,19 +84,17 @@ namespace VirtualTest.Controllers
         {   
             using (var dbContext = new ApplicationContext())
             {
-                using (IConnectionService connectionServices = new ConnectionServicesOpenTdb())
+                var questions = connectionService.GetTestQuestions(amount, categoryId, difficulty.ToString());
+                CategoryManager categoryManager = new CategoryManager(dbContext);
+                currentTest = new Test
                 {
-                    var questions = connectionServices.GetTestQuestions(amount, categoryId, difficulty.ToString());
-                    CategoryManager categoryManager = new CategoryManager(dbContext);
-                    currentTest = new Test
-                    {
-                        Amount = amount,
-                        Difficulty = difficulty,
-                        Category = categoryManager.GetById(categoryId),
-                        Questions = questions,
-                        User = currentUser
-                    };
-                }
+                    Amount = amount,
+                    Difficulty = difficulty,
+                    Category = categoryManager.GetById(categoryId),
+                    Questions = questions,
+                    User = currentUser
+                };
+                
             }
         }
 
@@ -105,8 +104,6 @@ namespace VirtualTest.Controllers
             {
                 IStrategyScore strategyScore = new StrategyScoreOpenTdb();
                 TestManager testManager = new TestManager(dbContext);
-                IMapper mapper = MapperConfig.Instance;
-
                 currentTest.Finish();
 
                 var amountCorrectAwnwers = currentTest.GetAmountCorrectAnwers();
@@ -121,7 +118,6 @@ namespace VirtualTest.Controllers
 
         public IEnumerable<QuestionDTO> StartTest()
         {
-            IMapper mapper = MapperConfig.Instance;
             currentTest.Start();
 
             return mapper.Map<IEnumerable<QuestionDTO>>(currentTest.Questions);
@@ -161,7 +157,6 @@ namespace VirtualTest.Controllers
             using (var dbContext = new ApplicationContext())
             {
                 TestManager testManager = new TestManager(dbContext);
-                IMapper mapper = MapperConfig.Instance;
 
                 var tests = testManager.GetAll();
 
@@ -176,7 +171,6 @@ namespace VirtualTest.Controllers
             using (var dbContext = new ApplicationContext())
             {
                 CategoryManager categoryManager = new CategoryManager(dbContext);
-                IMapper mapper = MapperConfig.Instance;
 
                 var allCategories = categoryManager.GetAll();
 
